@@ -14,7 +14,7 @@ export default function OysterCatering() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="bg-white">
       {/* Navigation */}
       <nav className="absolute w-full z-50 bg-transparent dark:bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
