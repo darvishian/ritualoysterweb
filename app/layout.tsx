@@ -6,17 +6,17 @@ import { ThemeProvider } from "@/components/theme-provider"
 const canela = localFont({
   src: [
     {
-      path: './fonts/Canela/Canela-Light.ttf',
+      path: '../public/fonts/Canela/Canela-Light.ttf',
       weight: '300',
       style: 'normal',
     },
     {
-      path: './fonts/Canela/Canela-Regular.ttf',
+      path: '../public/fonts/Canela/Canela-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './fonts/Canela/Canela-Medium.ttf',
+      path: '../public/fonts/Canela/Canela-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
@@ -27,17 +27,17 @@ const canela = localFont({
 const favorit = localFont({
   src: [
     {
-      path: './fonts/Favorit/Favorit-Light.ttf',
+      path: '../public/fonts/Favorit/Favorit-Light.ttf',
       weight: '300',
       style: 'normal',
     },
     {
-      path: './fonts/Favorit/Favorit-Regular.ttf',
+      path: '../public/fonts/Favorit/Favorit-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './fonts/Favorit/Favorit-Medium.ttf',
+      path: '../public/fonts/Favorit/Favorit-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
