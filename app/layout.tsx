@@ -37,7 +37,7 @@ const favorit = localFont({
       style: 'normal',
     },
     {
-      path: './fonts/Favorit/Favorit-Medium.ttf',
+      path: './fonts/Favorit/favorit-Medium.ttf',
       weight: '500',
       style: 'normal',
     },
