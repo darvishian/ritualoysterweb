@@ -125,8 +125,8 @@ export async function POST(req: Request) {
     // Send notification to admin
     console.log('Sending notification email to admin...')
     const adminEmailResponse = await resend.emails.send({
-      from: 'Ritual Oysters Bookings <notify@ritualoysters.com>',
-      to: ['alex.darvishian@33fg.com'],
+      from: 'Ritual Oysters Bookings <bookings@ritualoysters.com>',
+      to: ['alex@ritualoysters.com'],
       replyTo: data.email,
       subject: `🔔 New Booking Request - ${data.name} for ${formattedDate}`,
       html: `
