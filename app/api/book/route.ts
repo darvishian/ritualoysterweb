@@ -98,8 +98,11 @@ export async function POST(req: Request) {
       throw new Error('Failed to create calendar event: No event ID returned')
     }
 
+    console.log('Calendar event created successfully:', calendarResponse.data.id)
+
     // Send confirmation email to client
-    await resend.emails.send({
+    console.log('Sending confirmation email to client...')
+    const clientEmailResponse = await resend.emails.send({
       from: 'Ritual Oysters <bookings@ritualoysters.com>',
       to: data.email,
       subject: 'Booking Request Received - Ritual Oysters',
@@ -117,27 +120,46 @@ export async function POST(req: Request) {
         <p>Best regards,<br>Ritual Oysters Team</p>
       `
     })
+    console.log('Client email sent successfully:', clientEmailResponse)
 
     // Send notification to admin
-    await resend.emails.send({
-      from: 'Ritual Oysters Bookings <bookings@ritualoysters.com>',
-      to: 'bookings@ritualoysters.com',
-      subject: `New Booking Request - ${data.name} for ${formattedDate}`,
+    console.log('Sending notification email to admin...')
+    const adminEmailResponse = await resend.emails.send({
+      from: 'Ritual Oysters Bookings <notify@ritualoysters.com>',
+      to: ['alex.darvishian@33fg.com'],
+      replyTo: data.email,
+      subject: `🔔 New Booking Request - ${data.name} for ${formattedDate}`,
       html: `
-        <h1>New Booking Request</h1>
-        <h2>Client Details:</h2>
-        <ul>
-          <li>Name: ${data.name}</li>
-          <li>Email: ${data.email}</li>
-          <li>Date: ${formattedDate}</li>
-          <li>Guest Count: ${data.guestCount}</li>
-          ${data.message ? `<li>Additional Information: ${data.message}</li>` : ''}
-        </ul>
-        <p>Please review and respond to the client within 24 hours.</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333; border-bottom: 2px solid #333; padding-bottom: 10px;">New Booking Request</h1>
+          <h2 style="color: #666;">Client Details:</h2>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin: 10px 0;"><strong>Name:</strong> ${data.name}</li>
+            <li style="margin: 10px 0;"><strong>Email:</strong> ${data.email}</li>
+            <li style="margin: 10px 0;"><strong>Date:</strong> ${formattedDate}</li>
+            <li style="margin: 10px 0;"><strong>Guest Count:</strong> ${data.guestCount}</li>
+            ${data.message ? `<li style="margin: 10px 0;"><strong>Additional Information:</strong> ${data.message}</li>` : ''}
+          </ul>
+          <div style="background-color: #f7f7f7; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <p style="margin: 0; color: #333;"><strong>Action Required:</strong> Please review and respond to the client within 24 hours.</p>
+          </div>
+          <div style="margin-top: 20px;">
+            <h3 style="color: #666;">Next Steps:</h3>
+            <ol style="color: #333;">
+              <li>Review the booking details above</li>
+              <li>Check calendar availability</li>
+              <li>Respond to the client within 24 hours</li>
+              <li>Update the calendar event status (remove "PENDING" if confirmed)</li>
+            </ol>
+          </div>
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
+            <p>This is an automated notification from Ritual Oysters Booking System.</p>
+          </div>
+        </div>
       `
     })
+    console.log('Admin email sent successfully:', adminEmailResponse)
 
-    console.log('Calendar event created successfully:', calendarResponse.data.id)
     return NextResponse.json({ 
       success: true, 
       eventId: calendarResponse.data.id 
