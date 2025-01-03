@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { google } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const oauth2Client = new OAuth2Client({
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -32,7 +35,6 @@ export async function POST(req: Request) {
   try {
     const data: BookingRequest = await req.json()
     
-    // Log the incoming request data
     console.log('Booking request received:', {
       name: data.name,
       email: data.email,
@@ -40,22 +42,16 @@ export async function POST(req: Request) {
       guestCount: data.guestCount
     })
 
-    // Verify OAuth client setup
-    console.log('Checking OAuth configuration:', {
-      clientId: process.env.GOOGLE_CLIENT_ID?.slice(0, 10) + '...',
-      hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-      redirectUri: process.env.GOOGLE_REDIRECT_URI,
-      hasRefreshToken: !!process.env.GOOGLE_REFRESH_TOKEN
-    })
-
+    // Format date for email
     const eventDate = new Date(data.date)
     const formattedDate = eventDate.toLocaleDateString('en-US', { 
-      weekday: 'short',
-      month: 'short', 
+      weekday: 'long',
+      month: 'long', 
       day: 'numeric', 
       year: 'numeric'
     })
 
+    // Create calendar event
     const event = {
       summary: `PENDING Ritual Oysters Service`,
       description: formatEventDescription(data),
@@ -102,13 +98,51 @@ export async function POST(req: Request) {
       throw new Error('Failed to create calendar event: No event ID returned')
     }
 
+    // Send confirmation email to client
+    await resend.emails.send({
+      from: 'Ritual Oysters <bookings@ritualoysters.com>',
+      to: data.email,
+      subject: 'Booking Request Received - Ritual Oysters',
+      html: `
+        <h1>Thank You for Your Booking Request</h1>
+        <p>Dear ${data.name},</p>
+        <p>We have received your booking request for ${formattedDate}. Our team will review your request and get back to you within 24 hours to confirm the details.</p>
+        <h2>Booking Details:</h2>
+        <ul>
+          <li>Date: ${formattedDate}</li>
+          <li>Guest Count: ${data.guestCount}</li>
+          ${data.message ? `<li>Additional Information: ${data.message}</li>` : ''}
+        </ul>
+        <p>If you have any questions in the meantime, please don't hesitate to reach out.</p>
+        <p>Best regards,<br>Ritual Oysters Team</p>
+      `
+    })
+
+    // Send notification to admin
+    await resend.emails.send({
+      from: 'Ritual Oysters Bookings <bookings@ritualoysters.com>',
+      to: 'bookings@ritualoysters.com',
+      subject: `New Booking Request - ${data.name} for ${formattedDate}`,
+      html: `
+        <h1>New Booking Request</h1>
+        <h2>Client Details:</h2>
+        <ul>
+          <li>Name: ${data.name}</li>
+          <li>Email: ${data.email}</li>
+          <li>Date: ${formattedDate}</li>
+          <li>Guest Count: ${data.guestCount}</li>
+          ${data.message ? `<li>Additional Information: ${data.message}</li>` : ''}
+        </ul>
+        <p>Please review and respond to the client within 24 hours.</p>
+      `
+    })
+
     console.log('Calendar event created successfully:', calendarResponse.data.id)
     return NextResponse.json({ 
       success: true, 
       eventId: calendarResponse.data.id 
     })
   } catch (error: any) {
-    // Log detailed error information
     console.error('Booking error details:', {
       message: error.message,
       stack: error.stack,
