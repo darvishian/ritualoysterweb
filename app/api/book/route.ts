@@ -32,6 +32,22 @@ export async function POST(req: Request) {
   try {
     const data: BookingRequest = await req.json()
     
+    // Log the incoming request data
+    console.log('Booking request received:', {
+      name: data.name,
+      email: data.email,
+      date: data.date,
+      guestCount: data.guestCount
+    })
+
+    // Verify OAuth client setup
+    console.log('Checking OAuth configuration:', {
+      clientId: process.env.GOOGLE_CLIENT_ID?.slice(0, 10) + '...',
+      hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+      redirectUri: process.env.GOOGLE_REDIRECT_URI,
+      hasRefreshToken: !!process.env.GOOGLE_REFRESH_TOKEN
+    })
+
     const eventDate = new Date(data.date)
     const formattedDate = eventDate.toLocaleDateString('en-US', { 
       weekday: 'short',
@@ -73,6 +89,7 @@ export async function POST(req: Request) {
       },
     }
 
+    console.log('Attempting to create calendar event...')
     const calendarResponse = await calendar.events.insert({
       calendarId: 'primary',
       requestBody: event,
@@ -81,17 +98,29 @@ export async function POST(req: Request) {
     })
 
     if (!calendarResponse?.data?.id) {
-      throw new Error('Failed to create calendar event')
+      console.error('Calendar response missing event ID:', calendarResponse)
+      throw new Error('Failed to create calendar event: No event ID returned')
     }
 
+    console.log('Calendar event created successfully:', calendarResponse.data.id)
     return NextResponse.json({ 
       success: true, 
       eventId: calendarResponse.data.id 
     })
   } catch (error: any) {
-    console.error('Booking error:', error)
+    // Log detailed error information
+    console.error('Booking error details:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data,
+      status: error.response?.status,
+    })
+    
     return NextResponse.json(
-      { error: error.message || 'Failed to process booking' },
+      { 
+        error: error.message || 'Failed to process booking',
+        details: error.response?.data || 'No additional details available'
+      },
       { status: 500 }
     )
   }
