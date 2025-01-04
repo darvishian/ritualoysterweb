@@ -45,6 +45,20 @@ const favorit = localFont({
   variable: '--font-favorit',
 })
 
+export const metadata = {
+  title: 'Chicago Oyster Catering | Luxury Raw Bar Service | Ritual Oysters',
+  description: 'Chicago\'s premier oyster catering and luxury raw bar service. Expert oyster shucking for weddings, corporate events, and private celebrations throughout Chicago and North Shore.',
+  keywords: 'Chicago oyster catering, raw bar service Chicago, luxury catering Chicago, wedding oyster bar, corporate event catering Chicago, seafood catering Chicago, premium raw bar service, North Shore catering',
+  openGraph: {
+    title: 'Chicago Oyster Catering | Luxury Raw Bar Service | Ritual Oysters',
+    description: 'Chicago\'s premier oyster catering and luxury raw bar service. Expert oyster shucking for weddings, corporate events, and private celebrations throughout Chicago and North Shore.',
+    url: 'https://ritualoysters.com',
+    siteName: 'Ritual Oysters',
+    locale: 'en_US',
+    type: 'website',
+  },
+}
+
 export default function RootLayout({
   children,
 }: {

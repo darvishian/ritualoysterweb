@@ -77,7 +77,7 @@ export default function OysterCatering() {
                   </span>
                 </h1>
                 <p className="text-lg text-black sm:text-xl max-w-xl font-sans font-light tracking-wider leading-relaxed">
-                  Chicago's premier raw bar catering service, bringing restaurant-caliber oyster experiences to the city's most prestigious events and celebrations.
+                  Chicago's premier raw bar and oyster catering service. Bringing restaurant-caliber oyster experiences to Chicago's most prestigious weddings, corporate events, and private celebrations. Serving downtown Chicago, North Shore, and surrounding areas.
                 </p>
                 <div className="mt-12 sm:flex sm:justify-start space-y-4 sm:space-y-0 sm:space-x-6">
                   <a
@@ -138,13 +138,13 @@ export default function OysterCatering() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-sand-500 dark:text-sand-100 font-sans font-light tracking-widest uppercase">
-              Our Expertise
+              Chicago Oyster Catering
             </h2>
             <p className="mt-2 text-3xl leading-8 font-display font-light tracking-wide text-black dark:text-white sm:text-4xl">
-              Curated Oyster Experiences
+              Luxury Raw Bar Service
             </p>
             <p className="mt-4 max-w-2xl text-xl text-gray-700 dark:text-gray-300 font-sans font-light mx-auto">
-              Specializing in premium oyster service with the option to expand your raw bar selection.
+              Expert oyster shucking and premium raw bar service for Chicago's finest events. From intimate gatherings to large-scale corporate events, we bring the finest seafood experience to your celebration.
             </p>
           </div>
           <div className="mt-10">
