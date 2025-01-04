@@ -260,7 +260,7 @@ export default function OysterCatering() {
             </div>
             <div className="relative h-[400px] lg:h-[600px]">
               <Image
-                src="/images/toast.jpg"
+                src="/images/Toast.jpg"
                 alt="Elegant oyster presentation"
                 fill
                 className="object-cover"
