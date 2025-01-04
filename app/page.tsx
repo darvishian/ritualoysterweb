@@ -77,7 +77,7 @@ export default function OysterCatering() {
                   </span>
                 </h1>
                 <p className="text-lg text-black sm:text-xl max-w-xl font-sans font-light tracking-wider leading-relaxed">
-                  Chicago's premier raw bar and oyster catering service. Bringing restaurant-caliber oyster experiences to Chicago's most prestigious weddings, corporate events, and private celebrations. Serving downtown Chicago, North Shore, and surrounding areas.
+                  Chicago's premier oyster catering service, bringing restaurant-caliber raw bar experiences to the city's most prestigious events. Serving downtown Chicago, North Shore, and surrounding areas.
                 </p>
                 <div className="mt-12 sm:flex sm:justify-start space-y-4 sm:space-y-0 sm:space-x-6">
                   <a
