@@ -73,9 +73,6 @@ export default function OysterCatering() {
               <div className="sm:text-center lg:text-left space-y-6">
                 <h1 className="font-display">
                   <span className="block text-6xl sm:text-7xl md:text-8xl tracking-wide font-light text-black leading-none">
-                    Ritual
-                  </span>
-                  <span className="block text-4xl sm:text-5xl md:text-6xl text-sand-100 mt-2 font-light leading-tight tracking-widest uppercase">
                     Luxury Oyster Catering
                   </span>
                 </h1>
