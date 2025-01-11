@@ -122,14 +122,20 @@ export async function POST(req: Request) {
     })
     console.log('Client email sent successfully:', clientEmailResponse)
 
-    // Send notification to admin
+    // Send notification to admin with retry logic
     console.log('Sending notification email to admin...')
-    const adminEmailResponse = await resend.emails.send({
-      from: 'Ritual Oysters <bookings@ritualoysters.com>',
-      to: ['alex@ritualoysters.com'],
-      subject: `New Booking Request - ${data.name} for ${formattedDate}`,
-      replyTo: data.email,
-      text: `
+    let retryCount = 0;
+    const maxRetries = 3;
+    let adminEmailResponse;
+
+    while (retryCount < maxRetries) {
+      try {
+        adminEmailResponse = await resend.emails.send({
+          from: 'Ritual Oysters <bookings@ritualoysters.com>',
+          to: ['alex@ritualoysters.com'],
+          subject: `New Booking Request - ${data.name} for ${formattedDate}`,
+          replyTo: data.email,
+          text: `
 New Booking Request Details:
 
 Name: ${data.name}
@@ -137,12 +143,27 @@ Email: ${data.email}
 Date: ${formattedDate}
 Guest Count: ${data.guestCount}
 Message: ${data.message}
-      `,
-      headers: {
-        'X-Entity-Ref-ID': new Date().getTime().toString(),
-      },
-    })
-    console.log('Admin email sent successfully:', adminEmailResponse)
+          `,
+          headers: {
+            'X-Entity-Ref-ID': new Date().getTime().toString(),
+            'Precedence': 'Bulk',
+            'X-Auto-Response-Suppress': 'All',
+          },
+        });
+        console.log('Admin email sent successfully:', adminEmailResponse);
+        break; // Exit loop if email sent successfully
+      } catch (emailError) {
+        retryCount++;
+        console.error(`Admin email attempt ${retryCount} failed:`, emailError);
+        if (retryCount < maxRetries) {
+          // Wait for 2 seconds before retrying
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          console.error('All admin email attempts failed');
+          // Continue execution even if admin email fails
+        }
+      }
+    }
 
     return NextResponse.json({ 
       success: true, 
