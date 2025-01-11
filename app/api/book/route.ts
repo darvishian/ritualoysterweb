@@ -125,38 +125,22 @@ export async function POST(req: Request) {
     // Send notification to admin
     console.log('Sending notification email to admin...')
     const adminEmailResponse = await resend.emails.send({
-      from: 'Ritual Oysters Bookings <bookings@ritualoysters.com>',
-      to: ['alex@ritualoysters.com', 'bookings@ritualoysters.com'],
+      from: 'Ritual Oysters <bookings@ritualoysters.com>',
+      to: ['alex@ritualoysters.com'],
+      subject: `New Booking Request - ${data.name} for ${formattedDate}`,
       replyTo: data.email,
-      subject: `🔔 New Booking Request - ${data.name} for ${formattedDate}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333; border-bottom: 2px solid #333; padding-bottom: 10px;">New Booking Request</h1>
-          <h2 style="color: #666;">Client Details:</h2>
-          <ul style="list-style: none; padding: 0;">
-            <li style="margin: 10px 0;"><strong>Name:</strong> ${data.name}</li>
-            <li style="margin: 10px 0;"><strong>Email:</strong> ${data.email}</li>
-            <li style="margin: 10px 0;"><strong>Date:</strong> ${formattedDate}</li>
-            <li style="margin: 10px 0;"><strong>Guest Count:</strong> ${data.guestCount}</li>
-            ${data.message ? `<li style="margin: 10px 0;"><strong>Additional Information:</strong> ${data.message}</li>` : ''}
-          </ul>
-          <div style="background-color: #f7f7f7; padding: 15px; margin: 20px 0; border-radius: 5px;">
-            <p style="margin: 0; color: #333;"><strong>Action Required:</strong> Please review and respond to the client within 24 hours.</p>
-          </div>
-          <div style="margin-top: 20px;">
-            <h3 style="color: #666;">Next Steps:</h3>
-            <ol style="color: #333;">
-              <li>Review the booking details above</li>
-              <li>Check calendar availability</li>
-              <li>Respond to the client within 24 hours</li>
-              <li>Update the calendar event status (remove "PENDING" if confirmed)</li>
-            </ol>
-          </div>
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
-            <p>This is an automated notification from Ritual Oysters Booking System.</p>
-          </div>
-        </div>
-      `
+      text: `
+New Booking Request Details:
+
+Name: ${data.name}
+Email: ${data.email}
+Date: ${formattedDate}
+Guest Count: ${data.guestCount}
+Message: ${data.message}
+      `,
+      headers: {
+        'X-Entity-Ref-ID': new Date().getTime().toString(),
+      },
     })
     console.log('Admin email sent successfully:', adminEmailResponse)
 
