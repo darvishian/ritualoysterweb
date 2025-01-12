@@ -53,8 +53,25 @@ export async function POST(req: Request) {
 
     // Create calendar event
     const event = {
-      summary: `PENDING Ritual Oysters Service`,
-      description: formatEventDescription(data),
+      summary: `🔔 New Booking Request - ${data.name}`,
+      description: `
+NEW BOOKING REQUEST
+
+Client Details:
+• Name: ${data.name}
+• Email: ${data.email}
+• Date: ${formattedDate}
+• Guest Count: ${data.guestCount}
+${data.message ? `• Additional Notes: ${data.message}` : ''}
+
+Action Required:
+1. Review booking details
+2. Check availability
+3. Respond to client within 24 hours
+4. Update event title (remove "New" when confirmed)
+
+This is an automated notification from the Ritual Oysters Booking System.
+      `,
       start: {
         dateTime: new Date(data.date).toISOString(),
         timeZone: 'America/Chicago',
@@ -64,7 +81,7 @@ export async function POST(req: Request) {
         timeZone: 'America/Chicago',
       },
       attendees: [
-        { email: 'bookings@ritualoysters.com' },
+        { email: 'alex@ritualoysters.com' },
         { email: data.email }
       ],
       creator: {
@@ -79,10 +96,15 @@ export async function POST(req: Request) {
       reminders: {
         useDefault: false,
         overrides: [
-          { method: 'email', minutes: 24 * 60 },
+          { method: 'email', minutes: 0 }, // Immediate email notification
+          { method: 'email', minutes: 24 * 60 }, // 24 hour reminder
           { method: 'popup', minutes: 60 }
         ],
       },
+      // Ensure notifications are sent
+      sendUpdates: 'all',
+      guestsCanModify: false,
+      guestsCanInviteOthers: false,
     }
 
     console.log('Attempting to create calendar event...')
@@ -122,48 +144,8 @@ export async function POST(req: Request) {
     })
     console.log('Client email sent successfully:', clientEmailResponse)
 
-    // Send notification to admin with retry logic
-    console.log('Sending notification email to admin...')
-    let retryCount = 0;
-    const maxRetries = 3;
-    let adminEmailResponse;
-
-    while (retryCount < maxRetries) {
-      try {
-        adminEmailResponse = await resend.emails.send({
-          from: 'Ritual Oysters <bookings@ritualoysters.com>',
-          to: ['alex@ritualoysters.com'],
-          subject: `New Booking Request - ${data.name} for ${formattedDate}`,
-          replyTo: data.email,
-          text: `
-New Booking Request Details:
-
-Name: ${data.name}
-Email: ${data.email}
-Date: ${formattedDate}
-Guest Count: ${data.guestCount}
-Message: ${data.message}
-          `,
-          headers: {
-            'X-Entity-Ref-ID': new Date().getTime().toString(),
-            'Precedence': 'Bulk',
-            'X-Auto-Response-Suppress': 'All',
-          },
-        });
-        console.log('Admin email sent successfully:', adminEmailResponse);
-        break; // Exit loop if email sent successfully
-      } catch (emailError) {
-        retryCount++;
-        console.error(`Admin email attempt ${retryCount} failed:`, emailError);
-        if (retryCount < maxRetries) {
-          // Wait for 2 seconds before retrying
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        } else {
-          console.error('All admin email attempts failed');
-          // Continue execution even if admin email fails
-        }
-      }
-    }
+    // Calendar notification will serve as admin notification
+    console.log('Using calendar notification for admin alerts')
 
     return NextResponse.json({ 
       success: true, 
