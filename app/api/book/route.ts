@@ -64,13 +64,7 @@ Client Details:
 • Guest Count: ${data.guestCount}
 ${data.message ? `• Additional Notes: ${data.message}` : ''}
 
-Action Required:
-1. Review booking details
-2. Check availability
-3. Respond to client within 24 hours
-4. Update event title (remove "New" when confirmed)
-
-This is an automated notification from the Ritual Oysters Booking System.
+Thank you for your booking request. Our team will review your request and get back to you within 24 hours.
       `,
       start: {
         dateTime: new Date(data.date).toISOString(),
