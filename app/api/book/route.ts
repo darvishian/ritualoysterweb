@@ -144,8 +144,39 @@ This is an automated notification from the Ritual Oysters Booking System.
     })
     console.log('Client email sent successfully:', clientEmailResponse)
 
-    // Calendar notification will serve as admin notification
-    console.log('Using calendar notification for admin alerts')
+    // Send notification to admin with enhanced error handling
+    console.log('Attempting to send admin notification email...')
+    try {
+      const adminEmailResponse = await resend.emails.send({
+        from: 'Ritual Oysters <bookings@ritualoysters.com>',
+        to: ['alex@ritualoysters.com'],
+        subject: `New Booking Request - ${data.name} for ${formattedDate}`,
+        replyTo: data.email,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>New Booking Request</h2>
+            <p><strong>Client:</strong> ${data.name}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Date:</strong> ${formattedDate}</p>
+            <p><strong>Guest Count:</strong> ${data.guestCount}</p>
+            ${data.message ? `<p><strong>Message:</strong> ${data.message}</p>` : ''}
+          </div>
+        `,
+        headers: {
+          'X-Entity-Ref-ID': new Date().getTime().toString(),
+        },
+      })
+      console.log('Admin email sent successfully:', adminEmailResponse)
+    } catch (emailError: any) {
+      console.error('Admin email error:', {
+        message: emailError.message,
+        name: emailError.name,
+        response: emailError.response,
+        code: emailError.code,
+        statusCode: emailError.statusCode,
+      })
+      // Don't throw error - continue with response
+    }
 
     return NextResponse.json({ 
       success: true, 
